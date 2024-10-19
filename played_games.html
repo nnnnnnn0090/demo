@@ -25,39 +25,40 @@
     <div class="content" id="content">
     </div>
 
+    <div id="credit">site dev: <a href="https://github.com/nnnnnnn0090">@nnnnnnn0090</a></div>
+
     <script>
-    const tocList = document.getElementById('tocList');
-    const contentDiv = document.getElementById('content');
+        const tocList = document.getElementById('tocList');
+        const contentDiv = document.getElementById('content');
 
-    function toHiragana(str) {
-        return str.replace(/[\u30A1-\u30F6]/g, function (char) {
-            return String.fromCharCode(char.charCodeAt(0) - 0x60);
-        });
-    }
+        function toHiragana(str) {
+            return str.replace(/[\u30A1-\u30F6]/g, function (char) {
+                return String.fromCharCode(char.charCodeAt(0) - 0x60);
+            });
+        }
 
-    fetch('./categories.json')
-        .then(response => response.json())
-        .then(categories => {
-            categories.forEach((category) => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `#${category.label}`;
-                a.textContent = category.label;
-                li.appendChild(a);
+        fetch('./categories.json')
+            .then(response => response.json())
+            .then(categories => {
+                categories.forEach((category) => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = `#${category.label}`;
+                    a.textContent = category.label;
+                    li.appendChild(a);
 
-                const categoryDiv = document.createElement('div');
-                contentDiv.appendChild(categoryDiv);
+                    const categoryDiv = document.createElement('div');
+                    contentDiv.appendChild(categoryDiv);
 
-                const contentSection = document.createElement('h2');
-                contentSection.id = category.label;
-                contentSection.textContent = category.label;
-                categoryDiv.appendChild(contentSection);
+                    const contentSection = document.createElement('h2');
+                    contentSection.id = category.label;
+                    contentSection.textContent = category.label;
+                    categoryDiv.appendChild(contentSection);
 
-                const subUl = document.createElement('ul');
-                const subCategories = {};
+                    const subUl = document.createElement('ul');
+                    const subCategories = {};
 
-                category.items.forEach((item) => {
-                    item.games.forEach((game) => {
+                    category.games.forEach((game) => {
                         const firstChar = toHiragana(game.title.charAt(0));
                         if (!subCategories[firstChar]) {
                             subCategories[firstChar] = {
@@ -67,72 +68,70 @@
                         }
                         subCategories[firstChar].games.push(game);
                     });
-                });
 
-                Object.values(subCategories).forEach((subCategory) => {
-                    const subLi = document.createElement('li');
-                    const subA = document.createElement('a');
-                    subA.href = `#${subCategory.subLabel}`;
-                    subA.textContent = subCategory.subLabel;
-                    subLi.appendChild(subA);
+                    Object.values(subCategories).forEach((subCategory) => {
+                        const subLi = document.createElement('li');
+                        const subA = document.createElement('a');
+                        subA.href = `#${subCategory.subLabel}`;
+                        subA.textContent = subCategory.subLabel;
+                        subLi.appendChild(subA);
 
-                    const gameUl = document.createElement('ul');
-                    const subContentSection = document.createElement('h3');
-                    subContentSection.id = subCategory.subLabel;
-                    subContentSection.textContent = subCategory.subLabel;
-                    categoryDiv.appendChild(subContentSection);
+                        const gameUl = document.createElement('ul');
+                        const subContentSection = document.createElement('h3');
+                        subContentSection.id = subCategory.subLabel;
+                        subContentSection.textContent = subCategory.subLabel;
+                        categoryDiv.appendChild(subContentSection);
 
-                    subCategory.games.forEach((game) => {
-                        const gameDiv = document.createElement('div');
-                        gameDiv.classList.add('game-item');
+                        subCategory.games.forEach((game) => {
+                            const gameDiv = document.createElement('div');
+                            gameDiv.classList.add('game-item');
 
-                        const gameLi = document.createElement('li');
-                        const gameA = document.createElement('a');
-                        gameA.href = `#${game.title}`;
-                        gameA.textContent = game.title;
-                        gameLi.appendChild(gameA);
-                        gameUl.appendChild(gameLi);
+                            const gameLi = document.createElement('li');
+                            const gameA = document.createElement('a');
+                            gameA.href = `#${game.title}`;
+                            gameA.textContent = game.title;
+                            gameLi.appendChild(gameA);
+                            gameUl.appendChild(gameLi);
 
-                        const gameContentSection = document.createElement('h4');
-                        gameContentSection.id = game.title;
-                        gameContentSection.textContent = game.title;
-                        gameDiv.appendChild(gameContentSection);
+                            const gameContentSection = document.createElement('h4');
+                            gameContentSection.id = game.title;
+                            gameContentSection.textContent = game.title;
+                            gameDiv.appendChild(gameContentSection);
 
-                        const gameParagraph = document.createElement('p');
-                        gameParagraph.textContent = game.content;
-                        gameDiv.appendChild(gameParagraph);
+                            const gameParagraph = document.createElement('p');
+                            gameParagraph.textContent = game.content;
+                            gameDiv.appendChild(gameParagraph);
 
-                        categoryDiv.appendChild(gameDiv);
+                            categoryDiv.appendChild(gameDiv);
+                        });
+
+                        subLi.appendChild(gameUl);
+                        subUl.appendChild(subLi);
                     });
 
-                    subLi.appendChild(gameUl);
-                    subUl.appendChild(subLi);
+                    li.appendChild(subUl);
+                    tocList.appendChild(li);
                 });
 
-                li.appendChild(subUl);
-                tocList.appendChild(li);
-            });
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
 
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
 
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
+                        const headerOffset = document.getElementById('header').offsetHeight;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-                    const headerOffset = document.getElementById('header').offsetHeight;
-                    const elementPosition = targetElement.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth'
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
                     });
                 });
-            });
-        })
-        .catch(error => console.error('Error fetching categories:', error));
-
+            })
+            .catch(error => console.error('Error fetching categories:', error));
 
         function filterTable() {
             const input = document.getElementById('searchInput');

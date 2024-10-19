@@ -144,3 +144,13 @@ html, body {
 .game-item p {
     margin: 0;
 }
+
+
+#credit {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    font-size: 10pt;
+    padding: 10px;
+    opacity: 0.3;
+}
