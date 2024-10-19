@@ -10,7 +10,7 @@ html, body {
     width: 100%;
     color: #004793;
     padding: 20px;
-    display: flex; /* 追加 */
+    display: flex;
 }
 
 #title {
@@ -19,7 +19,7 @@ html, body {
 
 #back {
     width: 50%;
-    text-align: right; /* 右寄せにする場合 */
+    text-align: right;
 }
 
 #section {
@@ -49,7 +49,7 @@ html, body {
 
 .toc ul > li {
     margin: 10px 0;
-    position: relative; /* 相対位置を設定 */
+    position: relative;
 }
 
 .toc ul li a {
@@ -57,14 +57,14 @@ html, body {
     color: #004793;
     font-weight: bold;
     transition: color 0.3s ease;
-    padding-left: 20px; /* 左側に余白を追加 */
+    padding-left: 20px;
 }
 
 .toc ul li a:hover {
     color: #004793;
 }
 
-.toc ul li::before { /* 各項目の前に「・」を追加 */
+.toc ul li::before {
     content: "・";
     position: absolute;
     left: 0;
@@ -87,30 +87,30 @@ html, body {
 .content {
     font-size: 18px;
     padding: 20px;
-    background-color: #f9f9f9; /* コンテンツに背景色を追加 */
-    border-radius: 5px; /* 角を丸くする */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* コンテンツに影を追加 */
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .content h2 {
-    font-size: 26px; /* 見出しのサイズを少し大きく */
-    color: #004793; /* 色を変更 */
-    margin-top: 20px; /* 上のマージンを追加 */
-    margin-bottom: 10px; /* 下のマージンを追加 */
-    border-bottom: 2px solid #004793; /* 下線を追加して強調 */
-    padding-bottom: 5px; /* 下の余白を追加 */
+    font-size: 26px;
+    color: #004793;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #004793;
+    padding-bottom: 5px;
 }
 
 .content h1 {
-    font-size: 26px; /* 見出しのサイズを少し大きく */
-    margin-top: 20px; /* 上のマージンを追加 */
-    margin-bottom: 10px; /* 下のマージンを追加 */
-    padding-bottom: 5px; /* 下の余白を追加 */
+    font-size: 26px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
 }
 
 .content p {
-    margin-bottom: 20px; /* 段落の間隔を調整 */
-    line-height: 1.6; /* 行間を設定 */
+    margin-bottom: 20px;
+    line-height: 1.6;
 }
 
 .toc input {

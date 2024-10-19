@@ -16,18 +16,17 @@
         <div class="toc">
             <input type="text" id="searchInput" placeholder="目次を検索..." onkeyup="filterTable()">
             <ul id="tocList">
-                <!-- ここにリスト項目が追加される -->
             </ul>
         </div>        
     </div>
 
     <div class="content" id="content">
-        <!-- ここにコンテンツが追加される -->
     </div>
 
     <script>
+
         const categories = [
-            { label: 'あ行', items: ['あ', 'い', 'う'], contents: ['あの内容...', 'いの内容...', 'うの内容...'] },
+            { label: 'あ行', items: ['ゲーム名１', 'ゲーム名２', 'ゲーム名３'], contents: ['ゲーム名１の内容...', 'ゲーム名２の内容...', 'ゲーム名３の内容...'] },
             { label: 'か行', items: ['か', 'き', 'く'], contents: ['かの内容...', 'きの内容...', 'くの内容...'] },
             { label: 'さ行', items: ['さ', 'し', 'す'], contents: ['さの内容...', 'しの内容...', 'すの内容...'] },
             { label: 'た行', items: ['た', 'ち', 'つ'], contents: ['たの内容...', 'ちの内容...', 'つの内容...'] },
@@ -52,8 +51,8 @@
             const subUl = document.createElement('ul');
         
             const contentSection = document.createElement('h2');
-            contentSection.id = category.label; // Set the ID for linking
-            contentSection.textContent = category.label; // Use the content array
+            contentSection.id = category.label;
+            contentSection.textContent = category.label;
             contentDiv.appendChild(contentSection);
 
             category.items.forEach((item, itemIndex) => {
@@ -66,8 +65,8 @@
                 subUl.appendChild(subLi);
 
                 const contentSection = document.createElement('h1');
-                contentSection.id = item; // Set the ID for linking
-                contentSection.textContent = category.items[itemIndex]; // Use the content array
+                contentSection.id = item;
+                contentSection.textContent = category.items[itemIndex];
                 contentDiv.appendChild(contentSection);
 
                 const contentParagraph = document.createElement('p');
@@ -95,7 +94,6 @@
                     if (txtValue.toLowerCase().indexOf(filter) > -1) {
                         listItems[i].style.display = "";
                     } else {
-                        // Check visibility of sub-items
                         const subItems = listItems[i].getElementsByTagName('ul')[0];
                         if (subItems) {
                             let subItemVisible = false;
@@ -115,6 +113,15 @@
                 }
             }
         }
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
     </script>
 </body>
 </html>
