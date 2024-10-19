@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moku - プレイしたゲーム</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css" />
     <link rel="stylesheet" href="./played_games.css">
 </head>
+
 <body>
     <div id="header">
         <div id="title">プレイしたゲーム</div>
@@ -17,70 +19,106 @@
             <input type="text" id="searchInput" placeholder="目次を検索..." onkeyup="filterTable()">
             <ul id="tocList">
             </ul>
-        </div>        
+        </div>
     </div>
 
     <div class="content" id="content">
     </div>
 
     <script>
+    const tocList = document.getElementById('tocList');
+    const contentDiv = document.getElementById('content');
 
-        const categories = [
-            { label: 'あ行', items: ['ゲーム名１', 'ゲーム名２', 'ゲーム名３'], contents: ['ゲーム名１の内容...', 'ゲーム名２の内容...', 'ゲーム名３の内容...'] },
-            { label: 'か行', items: ['か', 'き', 'く'], contents: ['かの内容...', 'きの内容...', 'くの内容...'] },
-            { label: 'さ行', items: ['さ', 'し', 'す'], contents: ['さの内容...', 'しの内容...', 'すの内容...'] },
-            { label: 'た行', items: ['た', 'ち', 'つ'], contents: ['たの内容...', 'ちの内容...', 'つの内容...'] },
-            { label: 'な行', items: ['な', 'に', 'ぬ'], contents: ['なの内容...', 'にの内容...', 'ぬの内容...'] },
-            { label: 'は行', items: ['は', 'ひ', 'ふ'], contents: ['はの内容...', 'ひの内容...', 'ふの内容...'] },
-            { label: 'ま行', items: ['ま', 'み', 'む'], contents: ['まの内容...', 'みの内容...', 'むの内容...'] },
-            { label: 'や行', items: ['や', 'ゆ', 'よ'], contents: ['やの内容...', 'ゆの内容...', 'よの内容...'] },
-            { label: 'ら行', items: ['ら', 'り', 'る'], contents: ['らの内容...', 'りの内容...', 'るの内容...'] },
-            { label: 'わ行', items: ['わ', 'を', 'ん'], contents: ['わの内容...', 'をの内容...', 'んの内容...'] }
-        ];
-
-        const tocList = document.getElementById('tocList');
-        const contentDiv = document.getElementById('content');
-
-        categories.forEach((category) => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `#${category.label}`;
-            a.textContent = category.label;
-            li.appendChild(a);
-
-            const subUl = document.createElement('ul');
-        
-            const contentSection = document.createElement('h2');
-            contentSection.id = category.label;
-            contentSection.textContent = category.label;
-            contentDiv.appendChild(contentSection);
-
-            category.items.forEach((item, itemIndex) => {
-                const subLi = document.createElement('li');
-                subLi.classList.add('sub-item');
-                const subA = document.createElement('a');
-                subA.href = `#${item}`;
-                subA.textContent = item;
-                subLi.appendChild(subA);
-                subUl.appendChild(subLi);
-
-                const contentSection = document.createElement('h1');
-                contentSection.id = item;
-                contentSection.textContent = category.items[itemIndex];
-                contentDiv.appendChild(contentSection);
-
-                const contentParagraph = document.createElement('p');
-                contentParagraph.textContent = category.contents[itemIndex];
-                contentDiv.appendChild(contentParagraph);
-            });
-
-            li.appendChild(subUl);
-            tocList.appendChild(li);
+    function toHiragana(str) {
+        return str.replace(/[\u30A1-\u30F6]/g, function (char) {
+            return String.fromCharCode(char.charCodeAt(0) - 0x60);
         });
+    }
+
+    fetch('./categories.json')
+        .then(response => response.json())
+        .then(categories => {
+            categories.forEach((category) => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${category.label}`;
+                a.textContent = category.label;
+                li.appendChild(a);
+
+                const categoryDiv = document.createElement('div');
+                contentDiv.appendChild(categoryDiv);
+
+                const contentSection = document.createElement('h2');
+                contentSection.id = category.label;
+                contentSection.textContent = category.label;
+                categoryDiv.appendChild(contentSection);
+
+                const subUl = document.createElement('ul');
+                const subCategories = {};
+
+                category.items.forEach((item) => {
+                    item.games.forEach((game) => {
+                        const firstChar = toHiragana(game.title.charAt(0));
+                        if (!subCategories[firstChar]) {
+                            subCategories[firstChar] = {
+                                subLabel: firstChar,
+                                games: []
+                            };
+                        }
+                        subCategories[firstChar].games.push(game);
+                    });
+                });
+
+                Object.values(subCategories).forEach((subCategory) => {
+                    const subLi = document.createElement('li');
+                    const subA = document.createElement('a');
+                    subA.href = `#${subCategory.subLabel}`;
+                    subA.textContent = subCategory.subLabel;
+                    subLi.appendChild(subA);
+
+                    const gameUl = document.createElement('ul');
+                    const subContentSection = document.createElement('h3');
+                    subContentSection.id = subCategory.subLabel;
+                    subContentSection.textContent = subCategory.subLabel;
+                    categoryDiv.appendChild(subContentSection);
+
+                    subCategory.games.forEach((game) => {
+                        const gameDiv = document.createElement('div');
+                        gameDiv.classList.add('game-item');
+
+                        const gameLi = document.createElement('li');
+                        const gameA = document.createElement('a');
+                        gameA.href = `#${game.title}`;
+                        gameA.textContent = game.title;
+                        gameLi.appendChild(gameA);
+                        gameUl.appendChild(gameLi);
+
+                        const gameContentSection = document.createElement('h4');
+                        gameContentSection.id = game.title;
+                        gameContentSection.textContent = game.title;
+                        gameDiv.appendChild(gameContentSection);
+
+                        const gameParagraph = document.createElement('p');
+                        gameParagraph.textContent = game.content;
+                        gameDiv.appendChild(gameParagraph);
+
+                        categoryDiv.appendChild(gameDiv);
+                    });
+
+                    subLi.appendChild(gameUl);
+                    subUl.appendChild(subLi);
+                });
+
+                li.appendChild(subUl);
+                tocList.appendChild(li);
+            });
+        })
+        .catch(error => console.error('Error fetching categories:', error));
+
 
         function filterTable() {
             const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
+            const filter = toHiragana(input.value.toLowerCase());
             const listItems = tocList.getElementsByTagName('li');
 
             for (let i = 0; i < listItems.length; i++) {
@@ -90,8 +128,8 @@
             for (let i = 0; i < listItems.length; i++) {
                 const a = listItems[i].getElementsByTagName("a")[0];
                 if (a) {
-                    const txtValue = a.textContent || a.innerText;
-                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    const txtValue = toHiragana(a.textContent || a.innerText);
+                    if (txtValue.indexOf(filter) > -1) {
                         listItems[i].style.display = "";
                     } else {
                         const subItems = listItems[i].getElementsByTagName('ul')[0];
@@ -99,10 +137,23 @@
                             let subItemVisible = false;
                             for (let j = 0; j < subItems.children.length; j++) {
                                 const subA = subItems.children[j].getElementsByTagName("a")[0];
-                                const subTxtValue = subA.textContent || subA.innerText;
-                                if (subTxtValue.toLowerCase().indexOf(filter) > -1) {
+                                const subTxtValue = toHiragana(subA.textContent || subA.innerText);
+
+                                if (subTxtValue.indexOf(filter) > -1) {
                                     subItemVisible = true;
                                     break;
+                                }
+
+                                const gameUl = subItems.children[j].getElementsByTagName('ul')[0];
+                                if (gameUl) {
+                                    for (let k = 0; k < gameUl.children.length; k++) {
+                                        const gameA = gameUl.children[k].getElementsByTagName("a")[0];
+                                        const gameTxtValue = toHiragana(gameA.textContent || gameA.innerText);
+                                        if (gameTxtValue.indexOf(filter) > -1) {
+                                            subItemVisible = true;
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                             if (subItemVisible) {
@@ -113,15 +164,25 @@
                 }
             }
         }
+
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
 
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                const headerOffset = document.getElementById('header').offsetHeight;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
                     behavior: 'smooth'
                 });
             });
         });
     </script>
 </body>
+
 </html>
