@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moku - プレイしたゲーム</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@1.0.15/destyle.css"/>
+    <link rel="stylesheet" href="./played_games.css">
+</head>
+<body>
+    <div id="header">
+        <div id="title">プレイしたゲーム</div>
+        <a id="back" href="./index.html">ホームに戻る</a>
+    </div>
+    <div id="section">
+        <div class="toc">
+            <input type="text" id="searchInput" placeholder="目次を検索..." onkeyup="filterTable()">
+            <ul id="tocList">
+                <!-- ここにリスト項目が追加される -->
+            </ul>
+        </div>        
+    </div>
+
+    <div class="content" id="content">
+        <!-- ここにコンテンツが追加される -->
+    </div>
+
+    <script>
+        const categories = [
+            { label: 'あ行', items: ['あ', 'い', 'う'], contents: ['あの内容...', 'いの内容...', 'うの内容...'] },
+            { label: 'か行', items: ['か', 'き', 'く'], contents: ['かの内容...', 'きの内容...', 'くの内容...'] },
+            { label: 'さ行', items: ['さ', 'し', 'す'], contents: ['さの内容...', 'しの内容...', 'すの内容...'] },
+            { label: 'た行', items: ['た', 'ち', 'つ'], contents: ['たの内容...', 'ちの内容...', 'つの内容...'] },
+            { label: 'な行', items: ['な', 'に', 'ぬ'], contents: ['なの内容...', 'にの内容...', 'ぬの内容...'] },
+            { label: 'は行', items: ['は', 'ひ', 'ふ'], contents: ['はの内容...', 'ひの内容...', 'ふの内容...'] },
+            { label: 'ま行', items: ['ま', 'み', 'む'], contents: ['まの内容...', 'みの内容...', 'むの内容...'] },
+            { label: 'や行', items: ['や', 'ゆ', 'よ'], contents: ['やの内容...', 'ゆの内容...', 'よの内容...'] },
+            { label: 'ら行', items: ['ら', 'り', 'る'], contents: ['らの内容...', 'りの内容...', 'るの内容...'] },
+            { label: 'わ行', items: ['わ', 'を', 'ん'], contents: ['わの内容...', 'をの内容...', 'んの内容...'] }
+        ];
+
+        const tocList = document.getElementById('tocList');
+        const contentDiv = document.getElementById('content');
+
+        categories.forEach((category) => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `#${category.label}`;
+            a.textContent = category.label;
+            li.appendChild(a);
+
+            const subUl = document.createElement('ul');
+        
+            const contentSection = document.createElement('h2');
+            contentSection.id = category.label; // Set the ID for linking
+            contentSection.textContent = category.label; // Use the content array
+            contentDiv.appendChild(contentSection);
+
+            category.items.forEach((item, itemIndex) => {
+                const subLi = document.createElement('li');
+                subLi.classList.add('sub-item');
+                const subA = document.createElement('a');
+                subA.href = `#${item}`;
+                subA.textContent = item;
+                subLi.appendChild(subA);
+                subUl.appendChild(subLi);
+
+                const contentSection = document.createElement('h1');
+                contentSection.id = item; // Set the ID for linking
+                contentSection.textContent = category.items[itemIndex]; // Use the content array
+                contentDiv.appendChild(contentSection);
+
+                const contentParagraph = document.createElement('p');
+                contentParagraph.textContent = category.contents[itemIndex];
+                contentDiv.appendChild(contentParagraph);
+            });
+
+            li.appendChild(subUl);
+            tocList.appendChild(li);
+        });
+
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const listItems = tocList.getElementsByTagName('li');
+
+            for (let i = 0; i < listItems.length; i++) {
+                listItems[i].style.display = "none";
+            }
+
+            for (let i = 0; i < listItems.length; i++) {
+                const a = listItems[i].getElementsByTagName("a")[0];
+                if (a) {
+                    const txtValue = a.textContent || a.innerText;
+                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                        listItems[i].style.display = "";
+                    } else {
+                        // Check visibility of sub-items
+                        const subItems = listItems[i].getElementsByTagName('ul')[0];
+                        if (subItems) {
+                            let subItemVisible = false;
+                            for (let j = 0; j < subItems.children.length; j++) {
+                                const subA = subItems.children[j].getElementsByTagName("a")[0];
+                                const subTxtValue = subA.textContent || subA.innerText;
+                                if (subTxtValue.toLowerCase().indexOf(filter) > -1) {
+                                    subItemVisible = true;
+                                    break;
+                                }
+                            }
+                            if (subItemVisible) {
+                                listItems[i].style.display = "";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
